@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>環境安全紀錄系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap');
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #F4EBE2; color: #5D4037; }
+        .main-card { background: white; border-radius: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.05); }
+        .input-field { background-color: #FDF9F6; border: 1px solid #EADDD2; border-radius: 50px; padding: 12px 20px; width: 100%; outline: none; }
+        .paper-textarea { background-color: #FDF9F6; border: 1px solid #EADDD2; border-radius: 30px; padding: 20px; width: 100%; min-height: 120px; resize: none; outline: none; }
+        .submit-btn { background-color: #7D5A50; color: white; padding: 14px 40px; border-radius: 50px; transition: all 0.3s; cursor: pointer; border: none; font-weight: bold; }
+        .submit-btn:hover { background-color: #5D4037; transform: translateY(-2px); }
+        
+        /* 表格美化 */
+        .table-container { background: rgba(255, 255, 255, 0.6); border-radius: 30px; overflow: hidden; backdrop-filter: blur(10px); }
+        th { background-color: #EADDD2; color: #7D5A50; padding: 15px; text-align: left; }
+        td { padding: 15px; border-bottom: 1px solid #EEE6DE; background: white; }
+        tr:last-child td { border-bottom: none; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center p-8">
+
+    <div class="main-card w-full max-w-xl p-10 mb-10">
+        <h1 class="text-3xl font-bold mb-2">環境安全紀錄</h1>
+        <p class="text-[#A1887F] mb-8">謝謝您與我們一同守護這片土地的寧靜</p>
+
+        <form id="reportForm" class="space-y-6">
+            <div class="flex flex-col md:flex-row md:items-center">
+                <label class="w-32 font-medium">發現時間</label>
+                <input type="datetime-local" id="time" required class="input-field">
+            </div>
+
+            <div class="flex flex-col md:flex-row md:items-center">
+                <label class="w-32 font-medium">發生地點</label>
+                <input type="text" id="location" placeholder="請輸入地點內容..." required class="input-field">
+            </div>
+
+            <div class="space-y-2">
+                <label class="font-medium block">狀況描述</label>
+                <textarea id="description" placeholder="請填寫詳細細節..." required class="paper-textarea"></textarea>
+            </div>
+
+            <div class="text-center pt-4">
+                <button type="submit" class="submit-btn shadow-lg">
+                    紀錄已溫暖送達
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="w-full max-w-4xl">
+        <h2 class="text-xl font-bold mb-4 ml-4">已收到的紀錄清單</h2>
+        <div class="table-container shadow-sm">
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr>
+                        <th class="w-1/4">時間</th>
+                        <th class="w-1/4">地點</th>
+                        <th>狀況描述</th>
+                    </tr>
+                </thead>
+                <tbody id="recordList">
+                    <tr>
+                        <td colspan="3" class="text-center text-gray-400 py-10">目前尚無紀錄，請於上方填寫後提交。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('reportForm');
+        const recordList = document.getElementById('recordList');
+        let isFirstRecord = true;
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // 獲取數值
+            const time = document.getElementById('time').value;
+            const location = document.getElementById('location').value;
+            const description = document.getElementById('description').value;
+
+            // 如果是第一筆資料，先清空「目前尚無紀錄」的提示
+            if (isFirstRecord) {
+                recordList.innerHTML = '';
+                isFirstRecord = false;
+            }
+
+            // 建立新行
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td class="font-medium">${time.replace('T', ' ')}</td>
+                <td>${location}</td>
+                <td class="text-sm leading-relaxed">${description}</td>
+            `;
+
+            // 將新紀錄加到表格最上方 (最新資料排前面)
+            recordList.insertBefore(newRow, recordList.firstChild);
+
+            // 彈出成功動畫效果
+            alert('紀錄已顯示於下方表格！');
+            form.reset();
+        });
+    </script>
+</body>
+</html>
